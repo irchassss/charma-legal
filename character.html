@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Персонаж в Charma</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0015;
+      color: #fff;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+    }
+    .logo-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 32px;
+      margin-top: 16px;
+    }
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 10px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      text-shadow: 0 0 24px rgba(180,150,255,0.9), 0 0 8px rgba(180,150,255,0.5);
+    }
+    .logo-tagline {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.45);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 48px;
+      background: rgba(130,90,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 700;
+      color: #a080ff;
+      overflow: hidden;
+      flex-shrink: 0;
+      margin: 0 auto 16px;
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .char-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      margin-bottom: 6px;
+    }
+    .char-role {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 16px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .char-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
+      white-space: pre-wrap;
+      font-family: 'DM Sans', sans-serif;
+      margin-bottom: 6px;
+    }
+    .char-stat {
+      font-size: 12px;
+      color: rgba(160,128,255,0.9);
+      margin-top: 14px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .open-btn {
+      display: block;
+      background: linear-gradient(135deg, #7c4dff, #a855f7);
+      color: #fff;
+      text-align: center;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(124,77,255,0.4);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .open-btn:hover { opacity: 0.9; }
+    .loading {
+      color: rgba(255,255,255,0.4);
+      font-size: 15px;
+      margin-top: 60px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .error {
+      color: rgba(255,80,80,0.8);
+      font-size: 15px;
+      margin-top: 60px;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(124,77,255,0.25);
+      color: #a080ff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: 'DM Sans', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-row">
+    <span class="logo-text">CHARMA</span>
+    <span class="logo-tagline">ОБЩАЙСЯ · СОЗДАВАЙ · ЖИВИ</span>
+  </div>
+
+  <div id="loading" class="loading">Загружаем персонажа...</div>
+  <div id="error" class="error" style="display:none">Персонаж не найден или скрыт автором 😔</div>
+  <div id="card" class="card" style="display:none">
+    <div class="avatar" id="avatar"></div>
+    <div class="char-name" id="char-name"></div>
+    <div class="char-role" id="char-role"></div>
+    <div class="char-desc" id="char-desc"></div>
+    <div class="char-stat" id="char-stat"></div>
+  </div>
+
+  <a class="open-btn" href="https://irchassss.github.io/charma-legal/" id="open-btn" style="display:none">
+    Открыть Charma
+  </a>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRWHddkOeMBV89xGG_VF7P-VZDs5OTNFU",
+      authDomain: "charma-app.firebaseapp.com",
+      projectId: "charma-app",
+      storageBucket: "charma-app.firebasestorage.app",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('user');
+    const characterId = params.get('character');
+
+    async function loadCharacter() {
+      if (!userId || !characterId) { showError(); return; }
+      try {
+        const charRef = doc(db, 'users', userId, 'characters', characterId);
+        const charSnap = await getDoc(charRef);
+        if (!charSnap.exists()) { showError(); return; }
+        const char = charSnap.data();
+
+        // Приватных персонажей не показываем по ссылке
+        if (char.visibility && char.visibility !== 'public') { showError(); return; }
+
+        const avatarEl = document.getElementById('avatar');
+        if (char.photo) {
+          avatarEl.innerHTML = `<img src="${char.photo}" />`;
+        } else {
+          avatarEl.textContent = (char.avatar || (char.name || '?')[0] || '?').toUpperCase();
+        }
+
+        document.getElementById('char-name').innerHTML =
+          (char.name || 'Персонаж') + '<span class="badge">Charma</span>';
+        document.getElementById('char-role').textContent = char.role || '';
+        document.getElementById('char-desc').textContent = char.preview || char.description || '';
+
+        if (char.interactionCount) {
+          document.getElementById('char-stat').textContent = `${char.interactionCount} сообщений в диалогах`;
+        }
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('card').style.display = 'block';
+        document.getElementById('open-btn').style.display = 'block';
+        document.title = `${char.name || 'Персонаж'} в Charma`;
+      } catch (e) {
+        console.error(e);
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+    }
+
+    loadCharacter();
+  </script>
+</body>
+</html>
