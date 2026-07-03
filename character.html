@@ -110,6 +110,16 @@
       font-family: 'DM Sans', sans-serif;
     }
     .open-btn:hover { opacity: 0.9; }
+    .hint {
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 16px;
+      font-family: 'DM Sans', sans-serif;
+    }
     .loading {
       color: rgba(255,255,255,0.4);
       font-size: 15px;
@@ -153,9 +163,13 @@
     <div class="char-stat" id="char-stat"></div>
   </div>
 
-  <a class="open-btn" href="https://irchassss.github.io/charma-legal/" id="open-btn" style="display:none">
+  <a class="open-btn" href="#" id="open-btn" style="display:none">
     Открыть Charma
   </a>
+  <div class="hint" id="hint" style="display:none">
+    Похоже, приложение Charma ещё не установлено на этом устройстве 💜<br/>
+    Совсем скоро оно появится в RuStore — следите за обновлениями!
+  </div>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -206,6 +220,22 @@
         document.getElementById('card').style.display = 'block';
         document.getElementById('open-btn').style.display = 'block';
         document.title = `${char.name || 'Персонаж'} в Charma`;
+
+        // Клик по "Открыть Charma": пробуем открыть приложение по deep link,
+        // если через 1.5 сек страница всё ещё видна — значит приложение не установлено
+        const openBtn = document.getElementById('open-btn');
+        openBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const hint = document.getElementById('hint');
+          let appOpened = false;
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) appOpened = true;
+          }, { once: true });
+          window.location.href = `charma://character?user=${userId}&character=${characterId}`;
+          setTimeout(() => {
+            if (!appOpened) hint.style.display = 'block';
+          }, 1500);
+        });
       } catch (e) {
         console.error(e);
         showError();
