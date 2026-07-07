@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charma — Оплата</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #EEEDFE;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 32px 32px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #534AB7;
+      margin-bottom: 32px;
+    }
+    .icon-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      background: #EEEDFE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-wrap svg { width: 38px; height: 38px; }
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .note {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #bbb;
+    }
+    .note a { color: #534AB7; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">CHARMA</div>
+    <div class="icon-wrap">
+      <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="19" cy="19" r="19" fill="#EEEDFE"/>
+        <path d="M11 19.5L16.5 25L27 13" stroke="#534AB7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Оплата обработана</h1>
+    <p>Вернитесь в приложение Charma — статус подписки обновится в течение нескольких секунд.</p>
+    <div class="note">По вопросам: <a href="mailto:charma.app.support@gmail.com">charma.app.support@gmail.com</a></div>
+  </div>
+</body>
+</html>
